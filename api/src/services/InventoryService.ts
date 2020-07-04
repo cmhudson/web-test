@@ -6,12 +6,7 @@ export class InventoryService {
     public async getInventoryForDay(givenDate: string, restId: number) {
         // query inventory table
         let model = new Inventory()
-        const query = await Inventory.findAll({
-            where: {
-                restaurant_id: restId,
-                block_date: givenDate
-            }
-        })
+
         // start at restaurant opening time
         let restaurant = await Restaurant.findOne({where: { id: restId}})
         let openTime = moment(givenDate)
@@ -32,15 +27,28 @@ export class InventoryService {
             openTime.add(15, 'minutes')
         }
 
+        const query = await Inventory.findAll({
+            where: {
+                restaurant_id: restId,
+                block_date: givenDate
+            }
+        })
+        let blockStart = moment(givenDate)
+        let blockEnd = moment(givenDate)
+        let incrementStart = moment(givenDate)
 
-        query.every( row => {
-            let rowMomentStart = moment(row.block_date).hour(row.start_time.split(':')[0]).minute(row.start_time.split(':')[1])
-            let rowMomentEnd = moment(row.block_date).hour(row.end_time.split(':')[0]).minute(row.end_time.split(':')[1])
-            console.log("inside query loop", rowMomentStart, rowMomentEnd)
+        query.forEach( row => {
+            blockStart.hour(row.start_time.split(':')[0]).minute(row.start_time.split(':')[1])
+            blockEnd.hour(row.end_time.split(':')[0]).minute(row.end_time.split(':')[1])
+
+
+            let index = 0
             data.forEach(element => {
-                if (rowMomentStart.format('HH:mm') <= element.start_time && rowMomentEnd.format('HH:mm') > element.start_time) {
-                    console.log("we foudn a spot")
+                incrementStart.hour(element.start_time.split(':')[0]).minute(element.start_time.split(':')[1])
+                if (blockStart <= incrementStart && blockEnd > incrementStart) {
+                    data[index].available_reservations = row.reservation_spaces
                 }
+                index++
             })
         })
 

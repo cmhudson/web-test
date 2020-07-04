@@ -53,7 +53,7 @@ export class InventoryController {
       // get inventory for day
       const invClass = new InventoryService()
       let forDay = invClass.getInventoryForDay(req.params['date'], 3)
-      console.log("From controller: ", await forDay)
-      return res.send(await forDay).sendStatus(200);
+      //console.log("From controller: ", await forDay)
+      return res.status(200).send(await forDay);
   }
 }
