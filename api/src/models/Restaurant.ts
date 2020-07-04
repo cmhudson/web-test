@@ -19,6 +19,12 @@ export class Restaurant extends Model<Restaurant> {
   @Column
   address: string
 
+  @Column
+  open_time: string
+
+  @Column
+  close_time: string
+
   @DeletedAt
   deleted_at: string
 
