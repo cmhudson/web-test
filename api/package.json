@@ -27,5 +27,8 @@
     "winston": "^3.2.1",
     "express-validator": "^6.6.0",
     "moment": "^2.27.0"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.2.0"
   }
 }
