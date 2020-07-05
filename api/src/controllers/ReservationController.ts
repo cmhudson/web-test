@@ -1,8 +1,9 @@
-import {Controller, Get, Middleware, Post} from '@overnightjs/core'
+import {Controller, Middleware, Post} from '@overnightjs/core'
 import { Request, Response } from 'express'
 import { body, validationResult } from 'express-validator'
 import moment from 'moment'
-import {Inventory, Reservation} from "../models";
+import { Reservation } from "../models";
+import { InventoryService } from "../services/InventoryService";
 
 @Controller('reservations')
 export class ReservationController {
@@ -22,7 +23,6 @@ export class ReservationController {
     }
 
     // validate against inventory
-
     let reservation = {
         name: req.body.name,
         email: req.body.email,
@@ -30,6 +30,16 @@ export class ReservationController {
         start_time: moment(req.body.date).hour(req.body.start_time.split(':')[0]).minute(req.body.start_time.split(':')[1]),
         restaurant_id: req.body.restaurant_id
     }
+
+    // check if inventory exists
+      let svc = new InventoryService()
+      let validateTime = await svc.hasInventory(
+          reservation.start_time.format("YYYY-MM-DD HH:mm"),
+          req.body.restaurant_id
+      )
+      if (!validateTime) {
+          return res.status(422).json({errors: ['reservation_unavailable']})
+      }
       try {
           const reserved = Reservation.build(reservation)
           reserved.save()
