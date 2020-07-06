@@ -19,6 +19,13 @@
         </select>
         reservation spots
       </label>
+      <span class="errors" v-if="showError">
+        <ul>
+          <li v-for="(error, key) in errors" v-bind:key="key">
+            {{ error }}
+          </li>
+        </ul>
+      </span>
     </span>
     <span class="block-tools">
       <br /><button type="submit" v-on:click="onSubmitClick">save</button>
@@ -38,7 +45,9 @@ export default {
     return {
       spaces: [],
       maxSpaces: 15,
-      item: {}
+      item: {},
+      errors: [],
+      showError: false
     }
   },
   created() {
@@ -61,6 +70,23 @@ export default {
       return array
     },
     onSubmitClick: function() {
+      this.errors = []
+      if (this.item.start_time === null) {
+        this.errors.push('Start time required')
+      }
+      if (this.item.end_time === null) {
+        this.errors.push('End time required')
+      }
+      if (this.item.reservation_spaces < 1) {
+        this.errors.push('Reservation spots should between 1 and ' + this.maxSpaces)
+      }
+      console.log(this.errors)
+      if (this.errors.length > 0) {
+        this.showError = true
+        return
+      }
+      this.showError = false
+
       this.$emit('submitClicked', this.item)
     },
     onCancelClicked: function() {
@@ -74,6 +100,18 @@ export default {
 .edit-block {
   input {
     width: 50px;
+  }
+  .errors {
+    border: 1px solid darkred;
+    background: white;
+    display: block;
+    clear: both;
+    margin: 8px;
+
+
+    li {
+
+    }
   }
 }
 </style>

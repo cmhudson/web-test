@@ -26,6 +26,13 @@
           </option>
         </select></label
       ><br />
+      <span class="errors" v-if="showError">
+        <ul>
+          <li v-for="(error, key) in errors" v-bind:key="key">
+            {{ error }}
+          </li>
+        </ul>
+      </span>
       <button type="submit" v-on:click="saveClicked">create</button>
     </div>
   </div>
@@ -45,7 +52,9 @@ export default {
         email: null,
         party_size: 0
       },
-      maxPartySize: 8
+      maxPartySize: 8,
+      showError: false,
+      errors: []
     }
   },
   methods: {
@@ -58,6 +67,22 @@ export default {
     },
     saveClicked: function() {
       const payload = this.resInstance
+      this.errors = []
+      if (payload.name === null) {
+        this.errors.push('Name required')
+      }
+      if (payload.email === null) {
+        this.errors.push('Email required')
+      }
+      if (payload.party_size < 1) {
+        this.errors.push('Party size should between 1 and ' + this.maxPartySize)
+      }
+
+      if (this.errors.length > 0) {
+        this.showError = true
+        return
+      }
+      this.showError = false
       this.$store.dispatch('createReservation', payload).then(() => {
         this.resInstance = {
           start_time: null,
@@ -71,4 +96,22 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+  .errors {
+    border: 1px solid darkred;
+    background: white;
+    display: block;
+    width: 300px;
+    text-align: left;
+    margin: 8px;
+    margin-right: auto;
+    margin-left: auto;
+    clear: both;
+
+
+
+    li {
+
+    }
+  }
+</style>
