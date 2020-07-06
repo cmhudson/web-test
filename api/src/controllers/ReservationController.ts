@@ -1,12 +1,31 @@
-import {Controller, Middleware, Post} from '@overnightjs/core'
+import {Controller, Get, Middleware, Post} from '@overnightjs/core'
 import { Request, Response } from 'express'
-import { body, validationResult } from 'express-validator'
+import { param, body, validationResult } from 'express-validator'
 import moment from 'moment'
 import { Reservation } from "../models";
 import { InventoryService } from "../services/InventoryService";
 
 @Controller('reservations')
 export class ReservationController {
+
+  @Get(':date')
+  @Middleware([param('date').isDate()])
+  private async getByDate(req: Request, res: Response) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    const query = await Reservation.findAll({
+      where: {
+        restaurant_id: 3,
+        start_time: req.params.date
+      },
+      order: ['start_time']
+    })
+    return res.status(200).send(await query);
+  }
+
   @Post('')
   @Middleware([
       body('name').isLength({min: 3}),
@@ -16,7 +35,7 @@ export class ReservationController {
       body('date').isDate(),
       body('restaurant_id').isNumeric()
   ])
-  private async post(req: Request, res: Response) {
+  private async make(req: Request, res: Response) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });

@@ -16,7 +16,6 @@ export default {
     }
   },
   created: function() {
-    console.log('created')
     const payload = {
       day: '2020-07-15'
     }
@@ -27,7 +26,6 @@ export default {
   },
   methods: {
     setInventoryData: function (data) {
-      console.log("in the method", data)
       this.inventoryData = data
     }
   }
