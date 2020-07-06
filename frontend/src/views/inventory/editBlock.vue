@@ -7,7 +7,7 @@
       <label>
         to <input type="text" name="end_time" v-model="item.end_time"/></label
     ></span>
-    <span class="block-detail">
+    <div class="block-detail">
       <br /><label>
         <select name="reservation_spaces" v-model="item.reservation_spaces">
           <option
@@ -19,14 +19,14 @@
         </select>
         reservation spots
       </label>
-      <span class="errors" v-if="showError">
+      <div class="errors" v-if="showError">
         <ul>
           <li v-for="(error, key) in errors" v-bind:key="key">
             {{ error }}
           </li>
         </ul>
-      </span>
-    </span>
+      </div>
+    </div>
     <span class="block-tools">
       <br /><button type="submit" v-on:click="onSubmitClick">save</button>
       <button type="button" v-on:click="onCancelClicked">cancel</button>
@@ -78,7 +78,9 @@ export default {
         this.errors.push('End time required')
       }
       if (this.item.reservation_spaces < 1) {
-        this.errors.push('Reservation spots should between 1 and ' + this.maxSpaces)
+        this.errors.push(
+          'Reservation spots should between 1 and ' + this.maxSpaces
+        )
       }
       console.log(this.errors)
       if (this.errors.length > 0) {
@@ -108,9 +110,7 @@ export default {
     clear: both;
     margin: 8px;
 
-
     li {
-
     }
   }
 }

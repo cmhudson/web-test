@@ -26,13 +26,13 @@
           </option>
         </select></label
       ><br />
-      <span class="errors" v-if="showError">
+      <div class="errors" v-if="showError">
         <ul>
           <li v-for="(error, key) in errors" v-bind:key="key">
             {{ error }}
           </li>
         </ul>
-      </span>
+      </div>
       <button type="submit" v-on:click="saveClicked">create</button>
     </div>
   </div>
@@ -97,21 +97,18 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  .errors {
-    border: 1px solid darkred;
-    background: white;
-    display: block;
-    width: 300px;
-    text-align: left;
-    margin: 8px;
-    margin-right: auto;
-    margin-left: auto;
-    clear: both;
+.errors {
+  border: 1px solid darkred;
+  background: white;
+  display: block;
+  width: 300px;
+  text-align: left;
+  margin: 8px;
+  margin-right: auto;
+  margin-left: auto;
+  clear: both;
 
-
-
-    li {
-
-    }
+  li {
   }
+}
 </style>
