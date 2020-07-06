@@ -1,4 +1,4 @@
-import {Controller, Get, Middleware, Post} from '@overnightjs/core'
+import {Controller, Delete, Get, Middleware, Post} from '@overnightjs/core'
 import { Request, Response } from 'express'
 import { param, body, validationResult } from 'express-validator'
 import { Inventory } from '../models/Inventory'
@@ -6,6 +6,21 @@ import {InventoryService} from "../services/InventoryService";
 
 @Controller('inventory')
 export class InventoryController {
+  @Delete(':inventory_id')
+  private async deleteInventory(req: Request, res: Response) {
+    const invId = req.params.inventory_id
+    let instance = await Inventory.findOne({
+      where: {
+        inventory_id: invId
+      }
+    })
+    console.log(instance)
+    if (instance) {
+      instance.destroy()
+    }
+    return res.status(200).send()
+  }
+
   @Post('')
   @Middleware([
       body('reservation_spaces').isNumeric(),
@@ -19,11 +34,6 @@ export class InventoryController {
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
     }
-    // @todo: middleware to handle auth/restaurant identification.
-    /*let restaurantId = req.header('X-restaurant-id');
-    if (! restaurantId) {
-        return res.status(422).json({errors: ["missing restaurant ID header"]})
-    }*/
 
     let inv = {
         end_time: req.body.end_time,

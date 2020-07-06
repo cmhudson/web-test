@@ -7,7 +7,7 @@
     </span>
     <span class="block-tools">
       <a href="javscript://" v-on:click="editClicked">edit</a> |
-      <a href="javascript://">delete</a>
+      <a href="javascript://" v-on:click="deleteClicked">delete</a>
     </span>
   </div>
 </template>
@@ -21,9 +21,25 @@ export default {
   methods: {
     editClicked: function () {
         this.$emit('editClicked', this.inventoryItem.inventory_id)
+    },
+    deleteClicked: function () {
+      this.$emit('deleteClicked', this.inventoryItem.inventory_id)
     }
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+
+
+  .block-title {
+    font-weight: bold;
+  }
+  .block-detail {
+    clear: both;
+    display: block;
+  }
+  .block-tools {
+    display: block;
+  }
+</style>
