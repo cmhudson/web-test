@@ -49,7 +49,7 @@ export default {
     }
   },
   computed: {
-    inventoryState: function () {
+    inventoryState: function() {
       return this.$store.state.inventory
     }
   },
@@ -58,34 +58,13 @@ export default {
       if (this.editing !== null) {
         return
       }
-      // get edited row, save as placeholder
-      /*for (const item in this.inventory) {
-
-        if (item.inventory_id === payload) {
-          this.rowPlaceholder = item
-          //this.rowPlaceholder = Object.assign({}, payload)
-          break
-        }
-
-      }
-*/
       this.editing = payload
     },
     deleteClicked: function(id) {
       this.$store.dispatch('deleteInventory', id)
     },
-    editCancelled: function(payload) {
+    editCancelled: function() {
       this.editing = null
-
-      /*
-      let i = 0for (const item in this.inventory) {
-        if (payload === item.inventory_id) {
-          this.inventory[i] = Object.assign({}, this.rowPlaceholder)
-          break
-        }
-        this.rowPlaceholder = {}
-        i++
-      }*/
     },
     showAddForm: function() {
       this.adding = true
@@ -95,7 +74,7 @@ export default {
         this.adding = false
       })
     },
-    updateClicked: function (payload) {
+    updateClicked: function(payload) {
       this.$store.dispatch('updateInventory', payload).then(() => {
         this.editing = null
       })

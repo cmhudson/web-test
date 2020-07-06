@@ -1,7 +1,8 @@
 <template>
-
   <div class="block-wrapper">
-    <span class="block-title">From {{ inventoryItem.start_time }} to {{ inventoryItem.end_time }}</span>
+    <span class="block-title"
+      >From {{ inventoryItem.start_time }} to {{ inventoryItem.end_time }}</span
+    >
     <span class="block-detail">
       {{ inventoryItem.reservation_spaces }} reservation spots
     </span>
@@ -19,10 +20,10 @@ export default {
     inventoryItem: Object
   },
   methods: {
-    editClicked: function () {
-        this.$emit('editClicked', this.inventoryItem.inventory_id)
+    editClicked: function() {
+      this.$emit('editClicked', this.inventoryItem.inventory_id)
     },
-    deleteClicked: function () {
+    deleteClicked: function() {
       this.$emit('deleteClicked', this.inventoryItem.inventory_id)
     }
   }
@@ -30,16 +31,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
-
-  .block-title {
-    font-weight: bold;
-  }
-  .block-detail {
-    clear: both;
-    display: block;
-  }
-  .block-tools {
-    display: block;
-  }
+.block-title {
+  font-weight: bold;
+}
+.block-detail {
+  clear: both;
+  display: block;
+}
+.block-tools {
+  display: block;
+}
 </style>

@@ -43,11 +43,11 @@ const vuexStore = new Vuex.Store({
     },
     addReservation(state, data) {
       state.reservations.push(data)
-      state.reservations.sort((a, b) => (a.start_time > b.start_time) ? 1 : -1)
+      state.reservations.sort((a, b) => (a.start_time > b.start_time ? 1 : -1))
     },
     addInventory(state, data) {
       state.inventory.push(data)
-      state.inventory.sort((a, b) => (a.start_time > b.start_time) ? 1 : -1)
+      state.inventory.sort((a, b) => (a.start_time > b.start_time ? 1 : -1))
     },
     deleteInventory(state, data) {
       //newArr = arr.filter((x) => x != a)
@@ -64,88 +64,104 @@ const vuexStore = new Vuex.Store({
     }
   },
   actions: {
-    getReservationsForDay({commit, state}, payload) {
+    getReservationsForDay({ commit }, payload) {
       return new Promise((resolve, reject) => {
         /*if (state.inventory.length > 0) {
           resolve(state.inventory)
           return;
         }*/
-        axios.get("http://localhost:9090/reservations/" + payload.day).then(response => {
-
-          commit('setReservations', response.data)
-          resolve(true)
-        }, error => {
-          reject(error);
-        })
+        axios.get('http://localhost:9090/reservations/' + payload.day).then(
+          response => {
+            commit('setReservations', response.data)
+            resolve(true)
+          },
+          error => {
+            reject(error)
+          }
+        )
       })
     },
-    createReservation({ commit, state, dispatch }, payload) {
+    createReservation({ commit, dispatch }, payload) {
       const item = {
         start_time: payload.start_time,
-        date: "2020-07-15",
+        date: '2020-07-15',
         name: payload.name,
         email: payload.email,
         party_size: payload.party_size,
         restaurant_id: 3
       }
       return new Promise((resolve, reject) => {
-        axios.post("http://localhost:9090/reservations", item).then(response => {
-          commit('addReservation', response.data)
-          commit('invalidateAvailabilityState')
-          dispatch('getAvailabilityForDay', {day: '2020-07-15'})
-          resolve(true)
-        }, error => {
-          reject(error);
-        })
+        axios.post('http://localhost:9090/reservations', item).then(
+          response => {
+            commit('addReservation', response.data)
+            commit('invalidateAvailabilityState')
+            dispatch('getAvailabilityForDay', { day: '2020-07-15' })
+            resolve(true)
+          },
+          error => {
+            reject(error)
+          }
+        )
       })
     },
-    getInventoryForDay({commit, state}, payload) {
+    getInventoryForDay({ commit, state }, payload) {
       // check current state
       return new Promise((resolve, reject) => {
         // Do something here... lets say, a http call using vue-resource
         if (state.inventory.length > 0) {
           resolve(state.inventory)
-          return;
+          return
         }
-        axios.get("http://localhost:9090/inventory/" + payload.day).then(response => {
-
-          commit('setInventory', response.data)
-          resolve(true)
-        }, error => {
-          reject(error);
-        })
+        axios.get('http://localhost:9090/inventory/' + payload.day).then(
+          response => {
+            commit('setInventory', response.data)
+            resolve(true)
+          },
+          error => {
+            reject(error)
+          }
+        )
       })
     },
-    getAvailabilityForDay({commit, state}, payload) {
+    getAvailabilityForDay({ commit, state }, payload) {
       // check current state
-      console.log("refreshing availability")
+      console.log('refreshing availability')
       return new Promise((resolve, reject) => {
         if (state.availableReservations.length > 0) {
           resolve(true)
-          return;
+          return
         }
-        axios.get("http://localhost:9090/inventory/" + payload.day + "/availability").then(response => {
-
-          commit('setAvailability', response.data)
-          resolve(true)
-        }, error => {
-          reject(error);
-        })
+        axios
+          .get(
+            'http://localhost:9090/inventory/' + payload.day + '/availability'
+          )
+          .then(
+            response => {
+              commit('setAvailability', response.data)
+              resolve(true)
+            },
+            error => {
+              reject(error)
+            }
+          )
       })
     },
-    deleteInventory({commit, state, dispatch}, payload) {
+    deleteInventory({ commit, dispatch }, payload) {
       return new Promise((resolve, reject) => {
-        axios.delete("http://localhost:9090/inventory/" + payload).then(resonse => {
-          commit('deleteInventory', payload)
-          commit('invalidateAvailabilityState')
-          dispatch('getAvailabilityForDay', {day: '2020-07-15'})
-          resolve(true)
-        }, error => {
-          reject(error);
-        })
+        axios.delete('http://localhost:9090/inventory/' + payload).then(
+          response => {
+            commit('deleteInventory', payload)
+            commit('invalidateAvailabilityState')
+            dispatch('getAvailabilityForDay', { day: '2020-07-15' })
+            resolve(response)
+          },
+          error => {
+            reject(error)
+          }
+        )
       })
     },
-    updateInventory({commit, state, dispatch}, payload) {
+    updateInventory({ commit, dispatch }, payload) {
       const item = {
         start_time: payload.start_time,
         end_time: payload.end_time,
@@ -153,44 +169,50 @@ const vuexStore = new Vuex.Store({
         reservation_spaces: payload.reservation_spaces
       }
       if (item.start_time.length < 5) {
-        item.start_time = "0" + item.start_time
+        item.start_time = '0' + item.start_time
       }
       if (item.end_time.length < 5) {
-        item.end_time = "0" + item.end_time
+        item.end_time = '0' + item.end_time
       }
       const itemId = payload.inventory_id
       return new Promise((resolve, reject) => {
-        axios.put("http://localhost:9090/inventory/" + itemId, item).then(response => {
-          commit('updateInventoryItem', response.data)
-          commit('invalidateAvailabilityState')
-          dispatch('getAvailabilityForDay', {day: '2020-07-15'})
-          resolve(true)
-        }, error => {
-          reject(error);
-        })
+        axios.put('http://localhost:9090/inventory/' + itemId, item).then(
+          response => {
+            commit('updateInventoryItem', response.data)
+            commit('invalidateAvailabilityState')
+            dispatch('getAvailabilityForDay', { day: '2020-07-15' })
+            resolve(true)
+          },
+          error => {
+            reject(error)
+          }
+        )
       })
     },
-    createInventory({commit, state, dispatch}, payload) {
+    createInventory({ commit, dispatch }, payload) {
       payload.date = '2020-07-15'
       payload.restaurant_id = 3
       if (payload.start_time.length < 5) {
-        payload.start_time = "0" + payload.start_time
+        payload.start_time = '0' + payload.start_time
       }
       if (payload.end_time.length < 5) {
-        payload.end_time = "0" + payload.end_time
+        payload.end_time = '0' + payload.end_time
       }
 
       return new Promise((resolve, reject) => {
-        axios.post("http://localhost:9090/inventory", payload).then(response => {
-          commit('addInventory', response.data)
-          commit('invalidateAvailabilityState')
-          dispatch('getAvailabilityForDay', {day: '2020-07-15'})
-          resolve(true)
-        }, error => {
-          reject(error);
-        })
+        axios.post('http://localhost:9090/inventory', payload).then(
+          response => {
+            commit('addInventory', response.data)
+            commit('invalidateAvailabilityState')
+            dispatch('getAvailabilityForDay', { day: '2020-07-15' })
+            resolve(true)
+          },
+          error => {
+            reject(error)
+          }
+        )
       })
-    },
+    }
   }
 })
 export default vuexStore

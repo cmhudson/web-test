@@ -2,11 +2,30 @@
   <div class="edit-block block-wrapper">
     <span class="block-title">
       <label
-        >From <input type="text" name="start_time" v-model="item.start_time"
-      /></label>
+        >From
+        <select v-model="item.start_time" v-on:change="updateEndTimeIncrements">
+          <option
+            v-for="time in timeIncrements"
+            v-bind:key="time"
+            v-bind:value="time"
+          >
+            {{ time }}
+          </option>
+        </select>
+      </label>
       <label>
-        to <input type="text" name="end_time" v-model="item.end_time"/></label
-    ></span>
+        to
+        <select v-model="item.end_time">
+          <option
+            v-for="time in endTimeIncrements"
+            v-bind:key="time"
+            v-bind:value="time"
+          >
+            {{ time }}
+          </option>
+        </select></label
+      ></span
+    >
     <div class="block-detail">
       <br /><label>
         <select name="reservation_spaces" v-model="item.reservation_spaces">
@@ -35,6 +54,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   name: 'inventoryEditBlock',
   props: {
@@ -47,7 +67,9 @@ export default {
       maxSpaces: 15,
       item: {},
       errors: [],
-      showError: false
+      showError: false,
+      timeIncrements: [],
+      endTimeIncrements: []
     }
   },
   created() {
@@ -60,6 +82,8 @@ export default {
     } else {
       this.item = this.inventoryItem
     }
+    this.timeIncrements = this.getTimeIncrements()
+    this.endTimeIncrements = this.updateEndTimeIncrements()
   },
   methods: {
     getNumberSpaces: function() {
@@ -82,7 +106,6 @@ export default {
           'Reservation spots should between 1 and ' + this.maxSpaces
         )
       }
-      console.log(this.errors)
       if (this.errors.length > 0) {
         this.showError = true
         return
@@ -93,6 +116,30 @@ export default {
     },
     onCancelClicked: function() {
       this.$emit('editCancelled', this.inventoryItem.inventory_id)
+    },
+    getTimeIncrements: function() {
+      const timer = moment()
+      timer.hour(10).minute(0)
+      const endTime = moment()
+        .hour(21)
+        .minute(0)
+      const times = []
+      while (timer < endTime) {
+        times.push(timer.format('HH:mm'))
+        timer.add(15, 'minutes')
+      }
+      return times
+    },
+    updateEndTimeIncrements: function() {
+      const currentStartTime = this.item.start_time
+      console.log(currentStartTime)
+      if (!currentStartTime) {
+        return []
+      }
+      const index = this.timeIncrements.findIndex(row => {
+        return currentStartTime === row
+      })
+      return this.timeIncrements.slice(index + 1)
     }
   }
 }
