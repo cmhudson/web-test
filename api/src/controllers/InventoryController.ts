@@ -50,16 +50,19 @@ export class InventoryController {
           return res.status(422).json({ errors: errors.array() });
       }
 
-      // get inventory for day
-      const invClass = new InventoryService()
-      let forDay = invClass.getInventoryForDay(req.params['date'], 3)
-      //console.log("From controller: ", await forDay)
-      return res.status(200).send(await forDay);
+      const query = await Inventory.findAll({
+          where: {
+              restaurant_id: 3,
+              block_date: req.params.date
+          },
+          order: ['start_time']
+      })
+      return res.status(200).send(await query);
   }
 
-  @Get(':date/times')
+  @Get(':date/availability')
   @Middleware([param('date').isDate()])
-    private async getTimeBlocks(req: Request, res: Response) {
+    private async getAvailability(req: Request, res: Response) {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
           return res.status(422).json({ errors: errors.array() });

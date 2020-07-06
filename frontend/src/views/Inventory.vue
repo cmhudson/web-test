@@ -1,12 +1,15 @@
 <template>
   <div>
-    <h1>Inventory</h1>
+    <h1>Inventory for 2020-07-15</h1>
+    <inventory-blocks :inventory="inventoryData"></inventory-blocks>
   </div>
 </template>
 
 <script>
+import InventoryBlocks from "./inventory/blocks";
 export default {
   name: 'Inventory',
+  components: {InventoryBlocks},
   data: function() {
     return {
       inventoryData: []
