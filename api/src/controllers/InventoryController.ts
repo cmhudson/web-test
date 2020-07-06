@@ -1,7 +1,7 @@
 import {Controller, Delete, Get, Middleware, Post, Put} from '@overnightjs/core'
 import { Request, Response } from 'express'
 import { param, body, validationResult } from 'express-validator'
-import { Inventory } from '../models/Inventory'
+import { Inventory } from '../models'
 import {InventoryService} from "../services/InventoryService";
 
 @Controller('inventory')
@@ -76,12 +76,11 @@ export class InventoryController {
     }
     try {
         const inventory = Inventory.build(inv)
-        inventory.save()
+        await inventory.save()
+      return res.send(inventory).sendStatus(200);
     } catch (errors) {
         return res.status(500).json({ errors: errors.array() });
     }
-
-    return res.send(inv).sendStatus(200);
   }
 
   @Get(':date')

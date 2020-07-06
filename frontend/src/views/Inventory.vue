@@ -6,16 +6,16 @@
 </template>
 
 <script>
-import InventoryBlocks from "./inventory/blocks";
+import InventoryBlocks from './inventory/blocks'
 export default {
   name: 'Inventory',
-  components: {InventoryBlocks},
+  components: { InventoryBlocks },
   data: function() {
     return {
       inventoryData: []
     }
   },
-  created: function() {
+  mounted: function() {
     const payload = {
       day: '2020-07-15'
     }
@@ -25,7 +25,7 @@ export default {
     })
   },
   methods: {
-    setInventoryData: function (data) {
+    setInventoryData: function(data) {
       this.inventoryData = data
     }
   }

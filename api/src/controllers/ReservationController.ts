@@ -28,7 +28,7 @@ export class ReservationController {
 
   @Post('')
   @Middleware([
-      body('name').isLength({min: 3}),
+      body('name').isLength({min: 1}),
       body('email').isEmail(),
       body('party_size').isNumeric(),
       body('start_time').matches(/^\d\d:\d\d/),
@@ -61,11 +61,11 @@ export class ReservationController {
       }
       try {
           const reserved = Reservation.build(reservation)
-          reserved.save()
+          await reserved.save()
+          return res.send(reserved).sendStatus(200);
       } catch (errors) {
           return res.status(500).json({ errors: errors.array() });
       }
 
-    return res.send(req.body).sendStatus(200);
   }
 }

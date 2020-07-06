@@ -73,7 +73,7 @@ export class InventoryService {
             "select coalesce((select reservation_spaces from inventory " +
             " where restaurant_id = $1 " +
             "  and block_date = $2 " +
-            " and start_time <= $3 and end_time >= $3), 0) - ( " +
+            " and start_time <= $3 and end_time >= $3 and deleted_at is null LIMIT 1 ), 0) - ( " +
             " select count(*) from reservations where restaurant_id = $1" +
             " and start_time = $4" +
             ") as available",

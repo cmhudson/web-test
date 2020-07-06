@@ -18,13 +18,21 @@ const vuexStore = new Vuex.Store({
       return state.availableReservations.filter(row => {
         return row.available_reservations > 0
       })
+    },
+    getAvailability: state => {
+      return state.availableReservations
     }
   },
   mutations: {
     invalidateInventoryState(state) {
       state.inventory = []
     },
+    invalidateAvailabilityState(state) {
+      state.availableReservations = []
+      state.reservations = []
+    },
     setAvailability(state, data) {
+      console.log('mutating reservations')
       state.availableReservations = data
     },
     setInventory(state, data) {
@@ -71,7 +79,7 @@ const vuexStore = new Vuex.Store({
         })
       })
     },
-    createReservation({ commit, state }, payload) {
+    createReservation({ commit, state, dispatch }, payload) {
       const item = {
         start_time: payload.start_time,
         date: "2020-07-15",
@@ -83,6 +91,8 @@ const vuexStore = new Vuex.Store({
       return new Promise((resolve, reject) => {
         axios.post("http://localhost:9090/reservations", item).then(response => {
           commit('addReservation', response.data)
+          commit('invalidateAvailabilityState')
+          dispatch('getAvailabilityForDay', {day: '2020-07-15'})
           resolve(true)
         }, error => {
           reject(error);
@@ -108,9 +118,10 @@ const vuexStore = new Vuex.Store({
     },
     getAvailabilityForDay({commit, state}, payload) {
       // check current state
+      console.log("refreshing availability")
       return new Promise((resolve, reject) => {
-        if (state.inventory.length > 0) {
-          resolve(state.inventory)
+        if (state.availableReservations.length > 0) {
+          resolve(true)
           return;
         }
         axios.get("http://localhost:9090/inventory/" + payload.day + "/availability").then(response => {
@@ -122,21 +133,24 @@ const vuexStore = new Vuex.Store({
         })
       })
     },
-    deleteInventory({commit, state}, payload) {
+    deleteInventory({commit, state, dispatch}, payload) {
       return new Promise((resolve, reject) => {
-        axios.delete("http://localhost:9090/inventory/" + payload).then(response => {
+        axios.delete("http://localhost:9090/inventory/" + payload).then(resonse => {
           commit('deleteInventory', payload)
+          commit('invalidateAvailabilityState')
+          dispatch('getAvailabilityForDay', {day: '2020-07-15'})
           resolve(true)
         }, error => {
           reject(error);
         })
       })
     },
-    updateInventory({commit, state}, payload) {
+    updateInventory({commit, state, dispatch}, payload) {
       const item = {
         start_time: payload.start_time,
         end_time: payload.end_time,
-        date: '2020-07-15'
+        date: '2020-07-15',
+        reservation_spaces: payload.reservation_spaces
       }
       if (item.start_time.length < 5) {
         item.start_time = "0" + item.start_time
@@ -148,13 +162,15 @@ const vuexStore = new Vuex.Store({
       return new Promise((resolve, reject) => {
         axios.put("http://localhost:9090/inventory/" + itemId, item).then(response => {
           commit('updateInventoryItem', response.data)
+          commit('invalidateAvailabilityState')
+          dispatch('getAvailabilityForDay', {day: '2020-07-15'})
           resolve(true)
         }, error => {
           reject(error);
         })
       })
     },
-    createInventory({commit, state}, payload) {
+    createInventory({commit, state, dispatch}, payload) {
       payload.date = '2020-07-15'
       payload.restaurant_id = 3
       if (payload.start_time.length < 5) {
@@ -167,6 +183,8 @@ const vuexStore = new Vuex.Store({
       return new Promise((resolve, reject) => {
         axios.post("http://localhost:9090/inventory", payload).then(response => {
           commit('addInventory', response.data)
+          commit('invalidateAvailabilityState')
+          dispatch('getAvailabilityForDay', {day: '2020-07-15'})
           resolve(true)
         }, error => {
           reject(error);
