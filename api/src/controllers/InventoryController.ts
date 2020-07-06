@@ -14,7 +14,7 @@ export class InventoryController {
       body('date').isDate(),
       body('restaurant_id').isNumeric()
   ])
-  private async get(req: Request, res: Response) {
+  private async make(req: Request, res: Response) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
@@ -55,5 +55,21 @@ export class InventoryController {
       let forDay = invClass.getInventoryForDay(req.params['date'], 3)
       //console.log("From controller: ", await forDay)
       return res.status(200).send(await forDay);
+  }
+
+  @Get(':date/times')
+  @Middleware([param('date').isDate()])
+    private async getTimeBlocks(req: Request, res: Response) {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+          return res.status(422).json({ errors: errors.array() });
+      }
+
+      // get inventory for day
+      const invClass = new InventoryService()
+      let forDay = invClass.getInventoryForDay(req.params['date'], 3)
+      //console.log("From controller: ", await forDay)
+      return res.status(200).send(await forDay);
+
   }
 }
