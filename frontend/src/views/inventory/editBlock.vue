@@ -83,7 +83,7 @@ export default {
       this.item = this.inventoryItem
     }
     this.timeIncrements = this.getTimeIncrements()
-    this.endTimeIncrements = this.updateEndTimeIncrements()
+    this.updateEndTimeIncrements()
   },
   methods: {
     getNumberSpaces: function() {
@@ -132,14 +132,14 @@ export default {
     },
     updateEndTimeIncrements: function() {
       const currentStartTime = this.item.start_time
-      console.log(currentStartTime)
+
       if (!currentStartTime) {
         return []
       }
       const index = this.timeIncrements.findIndex(row => {
         return currentStartTime === row
       })
-      return this.timeIncrements.slice(index + 1)
+      this.endTimeIncrements = this.timeIncrements.slice(index + 1)
     }
   }
 }

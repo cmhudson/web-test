@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>Make a reservation</h3>
-    <div>
+    <div class="res-wrap">
       <label
         >Select time:
         <select v-model="resInstance.start_time">
@@ -97,16 +97,34 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.res-wrap {
+  display: block;
+  width: 300px;
+  text-align: left;
+  margin: 0 auto;
+  border: 1px solid #bfbfbf;
+  border-radius: 5px;
+  padding: 5px;
+
+  label {
+    display: inline-block;
+    width: 90px;
+    margin: 6px;
+    font-weight: bold;
+    font-size: 11pt;
+  }
+}
 .errors {
   border: 1px solid darkred;
   background: white;
   display: block;
-  width: 300px;
+  width: 250px;
   text-align: left;
   margin: 8px;
   margin-right: auto;
   margin-left: auto;
   clear: both;
+  font-size: 10pt;
 
   li {
   }
