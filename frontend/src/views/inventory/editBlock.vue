@@ -1,21 +1,15 @@
 <template>
   <div class="edit-block block-wrapper">
     <span class="block-title">
-      <label>From
-        <input type="text" name="start_time" v-model="item.start_time"
+      <label
+        >From <input type="text" name="start_time" v-model="item.start_time"
       /></label>
-      <label> to
-        <input
-          type="text"
-          name="end_time"
-          v-model="item.end_time"/></label
+      <label>
+        to <input type="text" name="end_time" v-model="item.end_time"/></label
     ></span>
     <span class="block-detail">
       <br /><label>
-        <select
-          name="reservation_spaces"
-          v-model="item.reservation_spaces"
-        >
+        <select name="reservation_spaces" v-model="item.reservation_spaces">
           <option
             v-for="i in getNumberSpaces()"
             v-bind:key="i"
@@ -77,9 +71,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
-    .edit-block{
-        input {
-            width: 50px;
-        }
-    }
+.edit-block {
+  input {
+    width: 50px;
+  }
+}
 </style>

@@ -7,7 +7,7 @@ Vue.use(Vuex)
 const vuexStore = new Vuex.Store({
   state: {
     inventory: [],
-      availableReservations: []
+    availableReservations: []
   },
   getters: {
     getCurrentInventory: state => {
@@ -29,6 +29,13 @@ const vuexStore = new Vuex.Store({
       //newArr = arr.filter((x) => x != a)
       state.inventory = state.inventory.filter(row => {
         return row.inventory_id != data
+      })
+    },
+    updateInventoryItem(state, data) {
+      state.inventory.forEach(row => {
+        if (row.inventory_id == data.inventory_id) {
+          row = data
+        }
       })
     }
   },
@@ -66,7 +73,7 @@ const vuexStore = new Vuex.Store({
         })
       })
     },
-    deleteInventory({commit, state }, payload) {
+    deleteInventory({commit, state}, payload) {
       return new Promise((resolve, reject) => {
         axios.delete("http://localhost:9090/inventory/" + payload).then(response => {
           commit('deleteInventory', payload)
@@ -76,8 +83,29 @@ const vuexStore = new Vuex.Store({
         })
       })
     },
+    updateInventory({commit, state}, payload) {
+      const item = {
+        start_time: payload.start_time,
+        end_time: payload.end_time,
+        date: '2020-07-15'
+      }
+      if (item.start_time.length < 5) {
+        item.start_time = "0" + item.start_time
+      }
+      if (item.end_time.length < 5) {
+        item.end_time = "0" + item.end_time
+      }
+      const itemId = payload.inventory_id
+      return new Promise((resolve, reject) => {
+        axios.put("http://localhost:9090/inventory/" + itemId, item).then(response => {
+          commit('updateInventoryItem', response.data)
+          resolve(true)
+        }, error => {
+          reject(error);
+        })
+      })
+    },
     createInventory({commit, state}, payload) {
-      console.log(payload)
       payload.date = '2020-07-15'
       payload.restaurant_id = 3
       if (payload.start_time.length < 5) {

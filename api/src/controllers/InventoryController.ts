@@ -1,4 +1,4 @@
-import {Controller, Delete, Get, Middleware, Post} from '@overnightjs/core'
+import {Controller, Delete, Get, Middleware, Post, Put} from '@overnightjs/core'
 import { Request, Response } from 'express'
 import { param, body, validationResult } from 'express-validator'
 import { Inventory } from '../models/Inventory'
@@ -17,8 +17,40 @@ export class InventoryController {
     console.log(instance)
     if (instance) {
       instance.destroy()
+    } else {
+      return res.status(404).send("resource doesn't exist")
     }
     return res.status(200).send()
+  }
+
+  @Put(':inventory_id')
+  @Middleware([
+    body('reservation_spaces').isNumeric(),
+    body('start_time').matches(/^\d\d:\d\d/),
+    body('end_time').matches(/^\d\d:\d\d/)
+  ])
+  private async updateInventory(req: Request, res: Response) {
+    const invId = req.params.inventory_id
+    let instance = await Inventory.findOne({
+      where: {
+        inventory_id: invId
+      }
+    })
+
+    if (instance) {
+      try {
+        instance.start_time = req.body.start_time
+        instance.end_time = req.body.end_time
+        instance.reservation_spaces = req.body.reservation_spaces
+        await instance.save()
+        await instance.reload()
+      } catch (e) {
+        console.log("error updating inventory", e)
+      }
+    } else {
+      return res.status(404).send("resource doesn't exist")
+    }
+    return res.status(200).send(instance)
   }
 
   @Post('')

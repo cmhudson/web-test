@@ -13,6 +13,7 @@
         <inventory-edit-block
           :inventory-item="item"
           v-else
+          v-on:submitClicked="updateClicked"
           v-on:editCancelled="editCancelled"
         />
       </li>
@@ -90,9 +91,13 @@ export default {
       this.adding = true
     },
     handleCreate: function(payload) {
-      console.log("deleting id: ", payload)
       this.$store.dispatch('createInventory', payload).then(() => {
         this.adding = false
+      })
+    },
+    updateClicked: function (payload) {
+      this.$store.dispatch('updateInventory', payload).then(() => {
+        this.editing = null
       })
     }
   }
